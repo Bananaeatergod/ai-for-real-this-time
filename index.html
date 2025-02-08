@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>C# Code Generator AI</title>
+    <style>
+        body { font-family: Arial, sans-serif; text-align: center; }
+        #chatbox { width: 50%; margin: auto; border: 1px solid #ccc; padding: 10px; height: 400px; overflow-y: scroll; }
+        #userInput { width: 50%; padding: 10px; }
+        button { padding: 10px; }
+    </style>
+</head>
+<body>
+    <h1>C# AI Code Generator</h1>
+    <div id="chatbox"></div>
+    <input type="text" id="userInput" placeholder="Ask for C# code..." />
+    <button onclick="sendMessage()">Send</button>
+
+    <script>
+        async function sendMessage() {
+            let input = document.getElementById("userInput").value;
+            let chatbox = document.getElementById("chatbox");
+            chatbox.innerHTML += `<p><b>You:</b> ${input}</p>`;
+
+            let response = await fetch("https://api.openai.com/v1/chat/completions", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": "Bearer YOUR_OPENAI_API_KEY"
+                },
+                body: JSON.stringify({
+                    model: "gpt-4",
+                    messages: [{ role: "system", content: "You are an AI that generates highly accurate C# code." }, { role: "user", content: input }]
+                })
+            });
+
+            let data = await response.json();
+            let message = data.choices[0].message.content;
+
+            chatbox.innerHTML += `<p><b>AI:</b> <code>${message}</code></p>`;
+            document.getElementById("userInput").value = "";
+        }
+    </script>
+</body>
+</html>
